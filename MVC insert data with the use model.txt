@@ -1,0 +1,180 @@
+
+
+**************************************************************************************************************
+ => Insert data in database with the use of model
+**************************************************************************************************************
+ 
+ 1. =>Create project name
+ 
+cmd code =>
+-------------------------------------------------
+composer create-project laravel/laravel new-test
+-------------------------------------------------
+**************************************************************************************************************
+
+ 2.=>Remove comment from provider
+--------------------------------------------------
+    path => Provider\RouteServiceProvider.php
+
+    protected $namespace = 'App\\Http\\Controllers';  
+  
+**************************************************************************************************************
+ 
+ 3.=>add code in app service provider
+------------------------------------------
+ path => Provider\AppServiceProvider.php
+
+ use Illuminate\Database\Schema\Builder;
+ Builder::defaultStringLength(191);
+
+**************************************************************************************************************
+
+ 4. => viewpage
+--------------------------------------------------------------------------------------------------------------
+form.blade.php
+------------------
+
+@extends("default")
+@section("formpage")
+<div class="container bg-success margin border border-1 mt-4">
+<form class="p-4" method="POST" action="form">
+@csrf
+Name : <input type="text" class="form-control inp_margin" palaceholer="enter name here" name="name">
+Email : <input type="email" class="form-control inp_margin" palaceholer="enter name here" name="email">
+password: <input type="number" class="form-control inp_margin" palaceholer="enter name here" name="password">
+<button type="submit" class="btn-success sbm_margin" id="btn-1">send</button>
+</form>
+</div>
+<!-- <script src="{{asset('manish/index.js')}}"></script> -->
+@endsection
+
+*************************************************************************************************************
+
+ 5. =>Route page
+-------------------
+ pagename =>web.php
+-------------------
+<?php
+
+use Illuminate\Support\Facades\Route;
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| contains the "web" middleware group. Now create something great!
+|
+*/
+
+Route::get('/', function () {
+    return view('form');
+});
+Route::POST('/form', 'index_con@pass');
+
+**************************************************************************************************************
+
+ 6. =>Controller page
+---------------------
+ make controller by cmd code =>php artisan make:controller con_name 
+ page-name => con.php
+-------------------------
+ 
+<?php
+
+namespace App\Http\Controllers;
+use App\Models\Wap;
+use Illuminate\Http\Request;
+
+class index_con extends Controller
+{
+    public function pass(Request $res){
+         $response = Wap::create($res->all());
+        if($response){
+            echo "success";
+        }
+        else{
+            echo "wrong";
+        }
+    }
+}
+************************************************************************************
+
+ 7. => make a database and connect with .env file example=> DB_DATABASE=databasename
+
+************************************************************************************
+
+ 8. => do migration 
+-------------------
+   code for make migration => php artisan make:migration create_waps_table
+-----------------------------------------------------------------------------------
+
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class CreateWapsTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('waps', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('email');
+            $table->integer('password');
+            $table->timestamps();
+
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('waps');
+    }
+}
+************************************************************************************
+ 9. => make migrate by cmd code => php artisan migrate
+
+************************************************************************************
+
+ 10. =>Modal page
+----------------
+make page by cmd code => php artisan make:model Wap
+------------------------------------------------------------------------------------
+
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Wap extends Model
+{
+    use HasFactory;
+    protected $fillable = [
+        'name',
+        'email',
+        'password'
+    ];  
+}
+**************************************************************************************
+
+
+
+
+
